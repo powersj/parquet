@@ -1,0 +1,75 @@
+# see docs/goreleaser.md for instructions and details on this file
+#
+before:
+  hooks:
+    - go mod tidy
+    - make
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - '-s -w'
+      - '-X github.com/powersj/parquet/internal.Version={{ .Env.version }}'
+      - '-X github.com/powersj/parquet/internal.Branch={{ .Env.branch }}'
+      - '-X github.com/powersj/parquet/internal.Commit={{ .Env.commit }}'
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    goamd64:
+      - v3
+    ignore:
+      - goos: windows
+        goarch: arm64
+      - goos: darwin
+        goarch: amd64
+
+changelog:
+  sort: asc
+
+nfpms:
+  - package_name: parquet
+    homepage: https://github.com/powersj/parquet
+    maintainer: Joshua Powers <powers@fastmail.com>
+    description: CLI to interact with parquet files
+    formats:
+      - deb
+      - rpm
+    # Name template result:
+    # parquet-2.0.0.aarch64.rpm
+    # parquet-2.0.0.x86_64.rpm
+    # parquet_2.0.0_arm64.deb
+    # parquet_2.0.0_amd64.deb
+    file_name_template: >-
+      {{- if eq .ConventionalExtension ".deb" }}
+        {{- .PackageName }}_{{ .Env.version }}_{{ .Arch }}
+      {{- else if eq .ConventionalExtension ".rpm" }}
+        {{- .PackageName }}-{{ .Env.version }}.
+        {{- if eq .Arch "amd64" }}x86_64
+        {{- else if eq .Arch "arm64" }}aarch64
+        {{- else }}{{ .Arch }}{{ end }}
+      {{- end }}
+      {{- .ConventionalExtension }}
+
+archives:
+  - format: tar.gz
+    files:
+      - README.md
+      - LICENSE
+    name_template: >-
+      {{ .ProjectName }}-{{ .Env.version }}-{{- tolower .Os }}-
+      {{- if eq .Arch "amd64" }}x86_64{{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+      - goos: darwin
+        format: zip
+
+checksum:
+  name_template: '{{ .ProjectName }}-checksums.txt'
+snapshot:
+  name_template: "{{ .Env.version }}-snapshot"
