@@ -19,10 +19,9 @@ func main() {
 		Description: cliDescription,
 		Suggest:     true,
 		Commands: []*cli.Command{
-			&metadataCmd,
+			&infoCmd,
 			&printCmd,
 			&queryCmd,
-			&schemaCmd,
 			{
 				Name:        "version",
 				Usage:       "Print version, build, and platform info",
