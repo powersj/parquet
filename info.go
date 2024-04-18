@@ -79,6 +79,14 @@ var infoCmd = cli.Command{
 				fmt.Println(string(data))
 			}
 		case "table":
+			fileTable := table.NewWriter()
+			fileTable.AppendRow(table.Row{"filename", filename})
+			fileTable.AppendRow(table.Row{"version", fInfo.Version})
+			fileTable.AppendRow(table.Row{"created by", fInfo.CreatedBy})
+			fileTable.AppendRow(table.Row{"number of rows", fInfo.NumRows})
+			fileTable.AppendRow(table.Row{"number of groups", fInfo.NumGroups})
+			fileTable.AppendRow(table.Row{"number of columns", fInfo.NumColumns})
+
 			columns := table.NewWriter()
 			columns.AppendHeader(table.Row{"column name", "type"})
 			for _, column := range fInfo.Columns {
@@ -87,16 +95,7 @@ var infoCmd = cli.Command{
 					column.Type,
 				})
 			}
-
-			fileTable := table.NewWriter()
-			fileTable.AppendRow(table.Row{"filename", filename})
-			fileTable.AppendRow(table.Row{"version", fInfo.Version})
-			fileTable.AppendRow(table.Row{"created by", fInfo.CreatedBy})
-			fileTable.AppendRow(table.Row{"number of rows", fInfo.NumRows})
-			fileTable.AppendRow(table.Row{"number of groups", fInfo.NumGroups})
-			fileTable.AppendRow(table.Row{"number of columns", fInfo.NumColumns})
 			fileTable.AppendRow(table.Row{"columns", columns.Render()})
-			fileTable.Style().Options.DrawBorder = false
 
 			fmt.Println(fileTable.Render())
 		}
