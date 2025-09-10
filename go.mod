@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/apache/arrow/go/v16 v16.1.0
 	github.com/jedib0t/go-pretty/v6 v6.6.8
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.27.7
 )
 
